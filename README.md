@@ -1,2 +1,2 @@
 # BOE-Bot
-Project in the course Introduction To Automation and Mechatronics.
+Project in the course Introduction To Automation and Mechatronics. :robot:
