@@ -1,48 +1,37 @@
-#include "Command.h"
-#include "PathCommand.h"
-#include "NavigationCommand.h"
+#include "Commands/Command.h"
+#include "Commands/ObjectDetectionCommand.h"
 
-#include "Wheels.h"
-#include "Speaker.h"
-#include "Whiskers.h"
+#include "Components/Wheels.h"
+#include "Components/Speaker.h"
+#include "Components/Whiskers.h"
+#include "Components/DistanceSensor.h"
 
-#include "Notes.h"
+#include "Audio/Notes.h"
 
 #define BUZZER_PIN 4
 #define RSERVO_PIN 12
 #define LSERVO_PIN 13
-#define RWHISKER_PIN 5
-#define LWHISKER_PIN 7
-#define BUTTON_PIN 9
+#define DISTANCESENSOR_SEVO 10
+#define DISTANCESENSOR 11
 
 void setup() 
 {
-
     Serial.begin(9600);
 
     // Instantierar de klasser som interagerar med hårdvaran. 
     Wheels* wheels = new Wheels(RSERVO_PIN, LSERVO_PIN);
     Speaker* speaker = new Speaker(BUZZER_PIN);
-    Whiskers* whiskers = new Whiskers(RWHISKER_PIN, LWHISKER_PIN);
+    DistanceSensor* distanceSensor = new DistanceSensor(DISTANCESENSOR, DISTANCESENSOR_SEVO);
 
-    // Väntar tills ett känseltrött aktiverats.
-    while(!(whiskers->IsWhiskerTouching(R_WHISKER) || whiskers->IsWhiskerTouching(L_WHISKER))) {} // Vänta på knapptryckning från användaren.
-
-    Command* command = nullptr;
-
-    if(whiskers->IsWhiskerTouching(R_WHISKER)) // Väljer vilken typ av kommando vi ska exikvera baserat.
-    {
-        String seq[] = { "f180", "rf158", "f45", "lf158", "f200", "s", "rf90", "lb90", "f180", "rf158", "f45", "lf158", "f200" };
-        Serial.println((sizeof(seq) / sizeof(String)));
-        command = new PathCommand(wheels, speaker, seq, (sizeof(seq) / sizeof(String)));
-    } 
-    else if(whiskers->IsWhiskerTouching(L_WHISKER))
-    {
-        command = new NavigationCommand(whiskers, wheels);
-    }
+    // Instantierar kommandot.
+    Command* command = new ObjectDetectionCommand(wheels, distanceSensor);
 
     // Exikverar kommandot.
     command->Excecute();
+
+    wheels->AttachWheels();
+    wheels->ManeuverAngle(5, true);
+    wheels->ManeuverDistance(500);
 
     //Spelar toner från speakern för att meddela att kommandot är avslutat.
     int tones[] = { NOTE_C5, NOTE_C5 };
@@ -53,7 +42,7 @@ void setup()
     delete command;
     delete wheels;
     delete speaker;
-    delete whiskers;
+    delete distanceSensor;
 }
 
 void loop() {}

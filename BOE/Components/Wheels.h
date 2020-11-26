@@ -9,9 +9,6 @@ class Wheels
 private:
     Servo rightServo;
     Servo leftServo;
-
-
-
 public:
     //Konstanter gällande robotens dimmentioner och egenskaper. 
     const int servoBaseSpeed = 1500;
@@ -20,9 +17,20 @@ public:
     const int wheelDiameter = 68;
     const int topVelocity = 237;
 
+    int rightServoPin = 0;
+    int leftServoPin = 0;
+
     Wheels(int rightServoPin, int leftServoPin);
     ~Wheels();
     
+    bool IsAttached() 
+    {
+        return rightServo.attached() || leftServo.attached(); 
+    }
+
+    void DetachWheels();
+    void AttachWheels();
+
     void AccelerateLinear(int currentSpeed, int goalSpeed, int time, int timeSteps = 20);
     void AccelerateLinearOneWheel(int currentSpeed, int goalSpeed, int time, bool rightWheel, int timeSteps = 20);
     
@@ -37,6 +45,8 @@ public:
     void Maneuver(int speed, int time);
     void Maneuver(int speed);
     void Stop();
+
+    int GetSpeed(bool right);
 };
 
 #endif

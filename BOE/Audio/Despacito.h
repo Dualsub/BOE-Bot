@@ -1,3 +1,6 @@
+#ifndef DESPACITO_H
+#define DESPACITO_H
+
 #include "Notes.h"
 
 int notes[] = {
@@ -26,3 +29,5 @@ int noteDurations[] = {
 };
 
 int numNotes = sizeof(notes) / sizeof(int);
+
+#endif

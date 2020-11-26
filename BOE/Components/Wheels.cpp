@@ -5,15 +5,38 @@
 
 Wheels::Wheels(int rightServoPin, int leftServoPin)
 {
+    this->rightServoPin = rightServoPin;
+    this->leftServoPin = leftServoPin;
+    
     rightServo.attach(rightServoPin);
     rightServo.writeMicroseconds(servoBaseSpeed);
-    
     leftServo.attach(leftServoPin);
     leftServo.writeMicroseconds(servoBaseSpeed);
 }
 
+void Wheels::DetachWheels() 
+{
+    leftServo.detach();
+    rightServo.detach();
+}
+
+void Wheels::AttachWheels() 
+{   
+    rightServo.attach(rightServoPin);
+    rightServo.writeMicroseconds(servoBaseSpeed);    
+    leftServo.attach(leftServoPin);
+    leftServo.writeMicroseconds(servoBaseSpeed);
+}
+
+
 Wheels::~Wheels()
 {
+    Serial.println("Deleted");
+}
+
+int Wheels::GetSpeed(bool right) 
+{
+    return right ? rightServo.readMicroseconds() - servoBaseSpeed : -(leftServo.readMicroseconds() - servoBaseSpeed);
 }
 
 void Wheels::AccelerateLinearOneWheel(int currentSpeed, int goalSpeed, int time, bool rightWheel, int timeSteps = 20) 
